@@ -1,0 +1,43 @@
+{
+	"baseUrl" : "http://editoraunicamp.com.br/",
+	"template" : {
+		"properties" : [{
+			"id" : "categories",
+			"selector" : ".itens_menu a",
+			"iterate" : true,
+			"properties" : [{
+				"id" : "link",
+				"ref" : "categories",
+				"keep" : "href"
+			}, {
+				"id" : "title",
+				"ref" : "categories",
+				"keep" : "text"
+			}, {
+				"id" : "items",
+				"iterate" : true,
+				"goto" : {
+					"ref" : "categories.link",
+					"selector" : ".caixa_produtos .box a",
+					"alias" : "item",
+					"goto" : {
+							"ref" : "item",
+						"properties" : [{
+							"selector" : ".caixa_produtos_esquerda_foto .foto_detalhe a",
+							"id" : "image",
+							"keep" : "href"
+						}, {
+							"selector" : ".caixa_produtos_direita h2",
+							"id" : "title",
+							"keep" : "text"
+						}, {
+							"selector" : ".caixa_produtos_direita p:nth-child(0)",
+							"id" : "author",
+							"keep" : "text"
+						}]
+					}
+				}
+			}]
+		}]
+	}
+}

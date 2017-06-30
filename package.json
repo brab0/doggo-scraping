@@ -1,0 +1,24 @@
+{
+  "name": "mr-crawler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brab0/mr-crawler.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brab0/mr-crawler/issues"
+  },
+  "homepage": "https://github.com/brab0/mr-crawler#readme",
+  "dependencies": {
+    "chrome-launcher": "^0.2.1",
+    "chrome-remote-interface": "^0.23.3"
+  }
+}
