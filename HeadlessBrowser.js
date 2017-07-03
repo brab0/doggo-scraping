@@ -10,29 +10,24 @@ module.exports = class HeadlessBrowser {
 	}
 
 	launch() {
-        this.chromeLauncher.launch({
+        return this.chromeLauncher.launch({
             chromeFlags: ['--disable-gpu','--headless']
         }).then(chrome => {
-            this.chrome = chrome;
+            return this.chrome = chrome;
+        }).then(chrome => {
+            return this.cdp({port: chrome.port})
+        }).then(protocol => {
+            const {Page, Runtime} = this.protocol = protocol;
 
-  	        this.cdp({port: chrome.port}).then(protocol => {
+            this.page = Page;
+            this.runtime = Runtime;
 
-    	  		const {Page, Runtime} = this.protocol = protocol;
-
-                this.page = Page;
-                this.runtime = Runtime;
-
-    	  		Promise.all([this.page.enable(), this.runtime.enable()]).then(() => {
-                    return goTo;
-                });
-
-	  	    });
+            return Promise.all([this.page.enable(), this.runtime.enable()]);
         });
 	}
 
-    goTo(url){
+    open(url){
         this.page.navigate({url: url});
-
         return this.page.loadEventFired();
     }
 

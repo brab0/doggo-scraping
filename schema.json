@@ -3,40 +3,30 @@
 	"template" : {
 		"properties" : [{
 			"id" : "categories",
-			"selector" : ".itens_menu a",
-			"iterate" : true,
+			"iterate" : "document.querySelectorAll('.itens_menu a').getAttribute('href')",
 			"properties" : [{
 				"id" : "link",
-				"ref" : "categories",
-				"keep" : "href"
+				"keep" : "document.querySelectorAll('.itens_menu a').getAttribute('href')"
 			}, {
 				"id" : "title",
-				"ref" : "categories",
-				"keep" : "text"
+				"keep" : "document.querySelectorAll('.itens_menu a').textContent"
 			}, {
 				"id" : "items",
-				"iterate" : true,
-				"goto" : {
-					"ref" : "categories.link",
-					"selector" : ".caixa_produtos .box a",
-					"alias" : "item",
-					"goto" : {
-							"ref" : "item",
-						"properties" : [{
-							"selector" : ".caixa_produtos_esquerda_foto .foto_detalhe a",
-							"id" : "image",
-							"keep" : "href"
-						}, {
-							"selector" : ".caixa_produtos_direita h2",
-							"id" : "title",
-							"keep" : "text"
-						}, {
-							"selector" : ".caixa_produtos_direita p:nth-child(0)",
-							"id" : "author",
-							"keep" : "text"
-						}]
-					}
-				}
+				"iterate" : "document.querySelector('.caixa_produtos .box a').getAttribute('href')",
+				"goto" : [
+					"document.querySelectorAll('.itens_menu a').getAttribute('href')",
+					"document.querySelector('.caixa_produtos .box a').getAttribute('href')"
+				],
+				"properties" : [{
+					"keep" : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')",
+					"id" : "image"
+				}, {
+					"keep" : "document.querySelector('.caixa_produtos_direita h2').textContent",
+					"id" : "title"
+				}, {
+					"keep" : "document.querySelector('.caixa_produtos_direita p:nth-child(0)').textContent",
+					"id" : "author"
+				}]
 			}]
 		}]
 	}
