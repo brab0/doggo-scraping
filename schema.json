@@ -1,33 +1,39 @@
 {
-	"baseUrl" : "http://editoraunicamp.com.br/",
-	"template" : {
-		"properties" : [{
-			"id" : "categories",
-			"iterate" : "document.querySelectorAll('.itens_menu a').getAttribute('href')",
-			"properties" : [{
-				"id" : "link",
-				"keep" : "document.querySelectorAll('.itens_menu a').getAttribute('href')"
-			}, {
-				"id" : "title",
-				"keep" : "document.querySelectorAll('.itens_menu a').textContent"
-			}, {
-				"id" : "items",
-				"iterate" : "document.querySelector('.caixa_produtos .box a').getAttribute('href')",
-				"goto" : [
-					"document.querySelectorAll('.itens_menu a').getAttribute('href')",
-					"document.querySelector('.caixa_produtos .box a').getAttribute('href')"
-				],
-				"properties" : [{
-					"keep" : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')",
-					"id" : "image"
+	"goto" : {
+		"url" : "http://editoraunicamp.com.br/",
+		"iterate" : {
+			"in" : "document.querySelectorAll('.itens_menu a')",
+			"set" : {
+				"property" : "categories",
+				"set" : [{
+					"property" : "link",
+					"from" : "document.querySelectorAll('.itens_menu a').getAttribute('href')"
 				}, {
-					"keep" : "document.querySelector('.caixa_produtos_direita h2').textContent",
-					"id" : "title"
+					"property" : "title",
+					"from" : "document.querySelectorAll('.itens_menu a').textContent"
 				}, {
-					"keep" : "document.querySelector('.caixa_produtos_direita p:nth-child(0)').textContent",
-					"id" : "author"
+					"property" : "items",
+					"goto" : {
+						"url" : "document.querySelectorAll('.itens_menu a').getAttribute('href')",
+						"iterate" : {
+							"in" : "document.querySelector('.caixa_produtos .box a')",
+							"goto" : {
+								"url" : "document.querySelector('.caixa_produtos .box a').getAttribute('href')",
+								"set" : [{
+									"property" : "image",
+									"from" : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')"
+								}, {
+									"property" : "title",
+									"from" : "document.querySelector('.caixa_produtos_direita h2').textContent"
+								}, {
+									"property" : "author",
+									"from" : "document.querySelector('.caixa_produtos_direita p:nth-child(0)').textContent"
+								}]
+							}
+						}
+					}
 				}]
-			}]
-		}]
+			}
+		}
 	}
 }
