@@ -1,15 +1,9 @@
-const HeadlessBrowser = require('./HeadlessBrowser');
-const hb = new HeadlessBrowser();
-const Schema = require('./schema.js');
+const MrCrawler = require('./MrCrawler.js');
+const schema = require('./schema.json');
 
-hb.launch()
-.then(() => hb.open('http://editoraunicamp.com.br/produto_detalhe.asp?id=854'))
-.then(() => {
+const crawler = new MrCrawler(schema);
 
-	const schema = new Schema(require('./schema.json'));
-	// console.log(Object.keys(schema.template).length)
-
-	hb.find(schema.template.properties[0])
-})
-.then(data => console.log(data.result.value))
-.then(() => hb.quit());
+crawler.read(function(res, i){	
+	// console.log(res, i)
+	// res.exec();
+});

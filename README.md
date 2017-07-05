@@ -2,11 +2,11 @@
 
 ## Schema Structure   
 ```
-	- goto
-      - url
+      - goto
+            - url
 	- iterate
-      - in
+            - in
 	- set
-      - property
-      - from
+            - property
+            - from
 '''
