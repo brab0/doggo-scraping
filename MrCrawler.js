@@ -5,15 +5,14 @@ module.exports = class MrCrawler {
 	constructor(schema) {
 		this.headlessBrowser = new HeadlessBrowser();
 		this.operations = [];
-		
+
 		this.prepare(schema);
 	}
 
 	prepare(schema) {
 		for (var key in schema) {
-         	if (schema.hasOwnProperty(key)) {				 
+      	if (schema.hasOwnProperty(key)) {
 				if (typeof schema[key] == "object") {
-					
 					if(ObjectNode.isAction(key)) {
 						this.operations.push(ObjectNode.getAction(key));
 					}
@@ -21,10 +20,20 @@ module.exports = class MrCrawler {
 					this.prepare(schema[key]);
 
 				} else {					
-					this.operations[this.operations.length - 1][key] = schema[key]					
+					this.operations[this.operations.length - 1][key] = schema[key]
 				}
         	}
-      	}
+   	}
+	}
+
+	read(callback, index = 0) {
+		if(index < 1){
+			this.exec(res => {
+				callback(res, index);
+			}, 0)
+
+			this.read(callback, ++index)
+		}
 	}
 
 	exec(cb, index) {
@@ -34,17 +43,7 @@ module.exports = class MrCrawler {
 			} else {
 				this.exec(cb, ++index);
 			}
-		});		
-	}
-
-	read(callback, index = 0) {			
-		if(index < 1){
-			this.exec(res => {
-				callback(res, index);
-			}, 0)
-
-			this.read(callback, ++index)
-		}
+		});
 	}
 }
 
