@@ -21,14 +21,14 @@ module.exports = class Operation {
 		return Object.keys(lastOperation).some(op => op === key);
 	}
 
-	static getAction(key) {
+	static setAction(key, headlessBrowser) {
 		switch(key) {
 			case 'goto':
-				return new Goto();
+				return new Goto(headlessBrowser);
 			case 'iterate':
-				return new Iterate();
+				return new Iterate(headlessBrowser);
 			case 'set':
-				return new Set();
+				return new Set(headlessBrowser);
 			default:
 				return false;
 		}

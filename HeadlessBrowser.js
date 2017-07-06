@@ -8,7 +8,6 @@ module.exports = class HeadlessBrowser {
         this.chrome = {};
         this.page = {};
         this.runtime = {};
-        this.launcher = this.launch();
 	}
 
 	launch() {
@@ -33,7 +32,7 @@ module.exports = class HeadlessBrowser {
         return this.page.loadEventFired();
     }
 
-    find(expression){
+    find(expression){        
         return this.runtime.evaluate({expression: expression});
     }
 

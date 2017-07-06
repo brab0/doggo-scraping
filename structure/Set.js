@@ -1,11 +1,13 @@
 module.exports = class Set {
-    constructor(){
+    constructor(headlessBrowser){
         this.property = "";
         this.from = "";
+        this.headlessBrowser = headlessBrowser;
     }
     
-    exec(){
-        console.log('set: ', { property : this.property, from : this.from })
-        return { property : this.property, from : this.from };
+    exec(cb = null) {
+        // console.log(this.from)
+        this.headlessBrowser.find(this.from)
+        .then(res => cb(res.result.value));
     }
 }

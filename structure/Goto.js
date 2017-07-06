@@ -1,11 +1,14 @@
 
 module.exports = class Goto {
-    constructor(){
-        this.url = "";    
+    constructor(headlessBrowser){
+        this.url = "";
+        this.headlessBrowser = headlessBrowser;
     }
     
-    exec(cb){
-        console.log('goto: ', this.url)
-        cb(this.url);
+    exec(cb = null) {        
+        return this.headlessBrowser.open(this.url)
+        .then(res => {
+            return res;
+        });
     }
 }

@@ -1,20 +1,24 @@
 module.exports = class Iterate {
-    constructor(){
-        this.in = "";
-        this.list = [];
-        this.index = 0;
+    constructor(headlessBrowser) {
+        this.in = "";    
+        this.headlessBrowser = headlessBrowser;
+        this.counter = 0;
     }
 
-    exec(cb){
-      this.in = []
-        console.log('iterate: ', this.in)
+    exec(cb = null) {      
+        return this.headlessBrowser
+            .find(this.in + '.length')
+            .then(res => {
+                // console.log(res.result.value, this.counter)
+                if(res.result.value - this.counter > 0) {                
+                    this.counter++;
 
-        if(this.in.length == this.index){
-            cb('done');
-        } else {
-            this.index++;
-            console.log(this.index, this.in.length)
-            this.exec(cb)
-        }
+                    cb(this.counter);
+
+                    this.exec(cb)
+                } else {
+                    cb(null);
+                }                                
+            });
     }
 }
