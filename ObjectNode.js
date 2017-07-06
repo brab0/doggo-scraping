@@ -2,26 +2,9 @@ const Goto = require('./structure/Goto');
 const Iterate = require('./structure/Iterate');
 const Set = require('./structure/Set');
 
-module.exports = class Operation{    
-	
-	constructor(key){		 
-		this.getInstance(key)
-	}
+module.exports = class Operation {		
 
-	getInstance(key) {
-		switch(key) {
-			case 'goto':
-				return new Goto();
-			case 'iterate':
-				return new Iterate();
-			case 'set':
-				return new Set();
-			default:
-				return false;
-		}
-	}
-
-    static isValid(key) {		
+    static isAction(key) {		
 		switch(key) {
 			case 'goto':
 				return true;
@@ -34,18 +17,20 @@ module.exports = class Operation{
 		}
 	}
 
-	static setProperty(action, property, value){	
-		let actionKeys = Object.keys(action);
+	static isProperty(key, lastOperation) {
+		return Object.keys(lastOperation).some(op => op === key);
+	}
 
-        const index = actionKeys.map(function(p){
-            return p;
-        }).indexOf(property);
-
-		if(index > -1){			
-			return value;
-		}			
-		else{
-			throw new Error('property not found');		
-		}			
-    }
+	static getAction(key) {
+		switch(key) {
+			case 'goto':
+				return new Goto();
+			case 'iterate':
+				return new Iterate();
+			case 'set':
+				return new Set();
+			default:
+				return false;
+		}
+	}
 }

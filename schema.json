@@ -2,15 +2,15 @@
 	"goto" : {
 		"url" : "http://editoraunicamp.com.br/",
 		"iterate" : {
-			"in" : "document.querySelectorAll('.itens_menu a')",
+			"in" : ["http://something.com", "http://something2.com"],
 			"set" : {
 				"property" : "categories",
 				"set" : [{
 					"property" : "link",
-					"from" : "document.querySelectorAll('.itens_menu a').getAttribute('href')"
+					"value" : "document.querySelectorAll('.itens_menu a').getAttribute('href')"
 				}, {
 					"property" : "title",
-					"from" : "document.querySelectorAll('.itens_menu a').textContent"
+					"value" : "document.querySelectorAll('.itens_menu a').textContent"
 				}, {
 					"property" : "items",
 					"goto" : {
@@ -21,13 +21,13 @@
 								"url" : "document.querySelector('.caixa_produtos .box a').getAttribute('href')",
 								"set" : [{
 									"property" : "image",
-									"from" : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')"
+									"value" : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')"
 								}, {
 									"property" : "title",
-									"from" : "document.querySelector('.caixa_produtos_direita h2').textContent"
+									"value" : "document.querySelector('.caixa_produtos_direita h2').textContent"
 								}, {
 									"property" : "author",
-									"from" : "document.querySelector('.caixa_produtos_direita p:nth-child(0)').textContent"
+									"value" : "document.querySelector('.caixa_produtos_direita p:nth-child(0)').textContent"
 								}]
 							}
 						}

@@ -1,16 +1,48 @@
 const HeadlessBrowser = require('./HeadlessBrowser');
-const Schema = require('./Schema');
+const ObjectNode = require('./ObjectNode');
 
 module.exports = class MrCrawler {
 	constructor(schema) {
 		this.headlessBrowser = new HeadlessBrowser();
-		this.objectNodes = [];				
-		this.schema = new Schema(schema);
+		this.operations = [];
+		
+		this.prepare(schema);
+	}
+
+	prepare(schema) {
+		for (var key in schema) {
+         	if (schema.hasOwnProperty(key)) {				 
+				if (typeof schema[key] == "object") {
+					
+					if(ObjectNode.isAction(key)) {
+						this.operations.push(ObjectNode.getAction(key));
+					}
+
+					this.prepare(schema[key]);
+
+				} else {					
+					this.operations[this.operations.length - 1][key] = schema[key]					
+				}
+        	}
+      	}
+	}
+
+	exec(cb, index) {
+		this.operations[index].exec(res => {
+			if(this.operations.length == parseInt(index + 1)){
+				cb(res)
+			} else {
+				this.exec(cb, ++index);
+			}
+		});		
 	}
 
 	read(callback, index = 0) {			
 		if(index < 1){
-			callback(index, index);
+			this.exec(res => {
+				callback(res, index);
+			}, 0)
+
 			this.read(callback, ++index)
 		}
 	}

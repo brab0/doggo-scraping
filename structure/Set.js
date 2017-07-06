@@ -1,10 +1,11 @@
 module.exports = class Set {
     constructor(){
-        this.property = "property";
-        this.from = "from";
+        this.property = "";
+        this.from = "";
     }
     
     exec(){
-        console.log(this.property, this.from);
+        console.log('set: ', { property : this.property, from : this.from })
+        return { property : this.property, from : this.from };
     }
 }

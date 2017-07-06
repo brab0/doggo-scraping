@@ -1,21 +1,23 @@
+const chromeLauncher = require('chrome-launcher');
+const cdp = require('chrome-remote-interface');
+
 module.exports = class HeadlessBrowser {
 
-  	constructor(){
-    	this.chromeLauncher = require('chrome-launcher');
-		this.cdp = require('chrome-remote-interface');
+  	constructor(){    	
         this.protocol = {};
         this.chrome = {};
         this.page = {};
         this.runtime = {};
+        this.launcher = this.launch();
 	}
 
 	launch() {
-        return this.chromeLauncher.launch({
+        return chromeLauncher.launch({
             chromeFlags: ['--disable-gpu','--headless']
         }).then(chrome => {
             return this.chrome = chrome;
         }).then(chrome => {
-            return this.cdp({port: chrome.port})
+            return cdp({port: chrome.port})
         }).then(protocol => {
             const {Page, Runtime} = this.protocol = protocol;
 

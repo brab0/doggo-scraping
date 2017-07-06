@@ -1,9 +1,11 @@
+
 module.exports = class Goto {
     constructor(){
-        this.url = "url";
+        this.url = "";    
     }
     
-    exec(){
-        console.log(this.url);
+    exec(cb){
+        console.log('goto: ', this.url)
+        cb(this.url);
     }
 }
