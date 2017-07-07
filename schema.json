@@ -2,7 +2,7 @@
 	"goto" : {
 		"url" : "http://editoraunicamp.com.br/",
 		"iterate" : {
-			"in" : "document.querySelectorAll('.itens_menu aasd')",
+			"in" : "document.querySelectorAll('.itens_menu a')",
 			"set" : {
 				"property" : "categories",
 				"set" : [{
