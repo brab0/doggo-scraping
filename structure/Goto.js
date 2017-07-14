@@ -7,7 +7,7 @@ module.exports = class Goto {
         this.headlessBrowser = headlessBrowser;
     }
 
-    *exec(cb = null) {
+    exec(cb = null) {
         var patt = new RegExp("://");
         
         if(!patt.test(this.url)){
@@ -21,14 +21,14 @@ module.exports = class Goto {
                         this.headlessBrowser.open(res.result.value + this.url)
                         .then(res => {
                             console.log(res.result.value + this.url);
-                            yield cb(res);
+                            cb(res);
                         });
                     });
                 } else {
                     this.headlessBrowser.open(this.url)
                     .then(res => {
                         console.log(this.url);
-                        yield cb(res);
+                        cb(res);
                     });
                 }
             });
@@ -36,7 +36,7 @@ module.exports = class Goto {
             this.headlessBrowser.open(this.url)
             .then(res => {
                 console.log(this.url);
-                yield cb(res);
+                cb(res);
             });
         }        
     }

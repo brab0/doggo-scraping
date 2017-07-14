@@ -15,16 +15,21 @@ module.exports = class MrCrawler {
 	*	extracts and format operations from schema to be executed
 	*/
 
-	prepare(schema) {
+	prepare(schema, i = -1) {
 		for (var key in schema) {
 			if (typeof schema[key] == "object") {
 				if(ObjectNode.isAction(key)) {
 					this.operations.push(ObjectNode.setAction(key, this.headlessBrowser));
 				}
-				this.prepare(schema[key]);
+
+				this.prepare(schema[key], schema[key].length);
+
 			} else {
 				this.operations[this.operations.length - 1][key] = schema[key]
 			}
+
+			console.log(key, i)
+
    		}
 	}
 
