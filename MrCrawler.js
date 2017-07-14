@@ -1,3 +1,5 @@
+'use strict';
+
 const HeadlessBrowser = require('./HeadlessBrowser');
 const ObjectNode = require('./ObjectNode');
 
@@ -19,9 +21,7 @@ module.exports = class MrCrawler {
 				if(ObjectNode.isAction(key)) {
 					this.operations.push(ObjectNode.setAction(key, this.headlessBrowser));
 				}
-
 				this.prepare(schema[key]);
-
 			} else {
 				this.operations[this.operations.length - 1][key] = schema[key]
 			}
@@ -29,25 +29,24 @@ module.exports = class MrCrawler {
 	}
 
 	/*
-	*	starts headless-chrome and pretends a reader for client use
+	*	starts headless-chrome and pretends to be a reader for client
 	*/
 
 	read(cb){
 		this.headlessBrowser.launch()
 		.then(() => {
-			this.prepare(this.schema);
+			this.prepare(this.schema);			
 			this.deliverObj(cb);
 		});
 	}
 
 	/*
-	*	The real reader. After all operations are collected, call them
-	*	and return an object
+	*	The real reader. After all map all operations, call them
+	*	and return an object at the end
 	*/
 
 	deliverObj(cb, counter = 0) {
 		this.runOperations(res => {
-
 			if(res && res != undefined){
 				cb(res, counter);
 				this.deliverObj(cb, ++counter)
@@ -63,14 +62,14 @@ module.exports = class MrCrawler {
 	*   gotten object back to the client
 	*/
 
-	runOperations(cb, index = 0) {
-		return this.operations[index].exec()
-		.then(res => {
-			if(parseInt(this.operations.length - index) > 0){
-				// console.log(res)
-				this.runOperations(++index);
-			} else {
-				cb(res)
+	runOperations(cb, index = 0) {	
+		// delete this.operations[index].headlessBrowser;
+		// console.log(this.operations[index])
+		this.operations[index].exec(res => {			
+			if(parseInt(this.operations.length - index) > 1){
+				this.runOperations(cb, ++index);
+			} else {				
+				cb(null)
 			}
 		});
 	}

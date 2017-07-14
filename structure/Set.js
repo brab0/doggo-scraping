@@ -6,10 +6,14 @@ module.exports = class Set {
     }
 
     exec(cb = null) {
-        this.headlessBrowser.find(this.from)
-        .then(res => {
-           console.log("set: " + this.property + " - " + this.from)
-           return res.result.value
-        });
+        if(this.from != ""){
+            this.headlessBrowser.find(this.from)
+            .then(res => {
+                console.log(res.result.value);
+                cb(res.result.value)
+            });
+        } else {
+            cb('new node')
+        }  
     }
 }

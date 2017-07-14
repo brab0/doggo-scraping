@@ -7,20 +7,17 @@ module.exports = class Iterate {
     }
 
     exec(cb = null) {
-        return this.headlessBrowser
+        this.headlessBrowser
             .find(this.in + '.length')
-            .then(res => {
-               //res.result.value
-                if(parseInt(5 - this.counter) > 0) {
-                   console.log('iterate: ', res.result.value, this.counter)
-
-                  //   cb(this.counter);
+            .then(res => {                              
+                if(parseInt(res.result.value - this.counter) > 0) {
+                    cb(res.result.value);
 
                     this.counter++;
 
                     this.exec(cb)
                 } else {
-                    return null;
+                    cb(null);
                 }
             });
     }

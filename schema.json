@@ -7,27 +7,27 @@
 				"property" : "categories",
 				"set" : [{
 					"property" : "link",
-					"value" : "document.querySelectorAll('.itens_menu a').getAttribute('href')"
+					"from" : "document.querySelector('.itens_menu a').getAttribute('href')"
 				}, {
 					"property" : "title",
-					"value" : "document.querySelectorAll('.itens_menu a').textContent"
+					"from" : "document.querySelector('.itens_menu a').textContent"
 				}, {
 					"property" : "items",
 					"goto" : {
-						"url" : "document.querySelectorAll('.itens_menu a').getAttribute('href')",
+						"url" : "document.querySelector('.itens_menu a').getAttribute('href')",
 						"iterate" : {
 							"in" : "document.querySelector('.caixa_produtos .box a')",
 							"goto" : {
 								"url" : "document.querySelector('.caixa_produtos .box a').getAttribute('href')",
 								"set" : [{
 									"property" : "image",
-									"value" : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')"
+									"from" : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')"
 								}, {
 									"property" : "title",
-									"value" : "document.querySelector('.caixa_produtos_direita h2').textContent"
+									"from" : "document.querySelector('.caixa_produtos_direita h2').textContent"
 								}, {
 									"property" : "author",
-									"value" : "document.querySelector('.caixa_produtos_direita p:nth-child(0)').textContent"
+									"from" : "document.querySelector('.caixa_produtos_direita p').textContent"
 								}]
 							}
 						}
