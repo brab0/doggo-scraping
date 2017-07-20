@@ -9,27 +9,63 @@ module.exports = class MrCrawler {
 		this.headlessBrowser = new HeadlessBrowser();
 		this.operations = [];
 		this.schema = schema;
+		this.nodes = [];
 	}
 
 	/*
 	*	extracts and format operations from schema to be executed
 	*/
 
-	prepare(schema, i = -1) {
+	prepare(schema, index = 0, parent = -1) {
 		for (var key in schema) {
 			if (typeof schema[key] == "object") {
+
+				schema[key]['index'] = index;
+
+				if(!(schema[key] instanceof Array)){
+					index++;
+				}
+				
+				this.setParentToChildren(schema[key], parent);
+
+				if(ObjectNode.isAction(key)) {
+					if(!(schema[key] instanceof Array)){
+						parent++;
+					}
+
+					this.operations.push(ObjectNode.setAction(key, this.headlessBrowser));
+				}
+
+				this.prepare(schema[key], index, parent);
+
+			} else {
+				this.operations[this.operations.length - 1][key] = schema[key];
+			}
+   		}
+	}
+
+	setParentToChildren(node, parent){
+		for (var key in node) {			
+			if (!node['parent']) {				
+				node['parent'] = parent;
+			}
+		}
+	}
+
+	prepareBKP(schema) {
+		for (var key in schema) {
+			
+			if (typeof schema[key] == "object") {
+				
 				if(ObjectNode.isAction(key)) {
 					this.operations.push(ObjectNode.setAction(key, this.headlessBrowser));
 				}
 
-				this.prepare(schema[key], schema[key].length);
+				this.prepare(schema[key]);
 
 			} else {
 				this.operations[this.operations.length - 1][key] = schema[key]
 			}
-
-			console.log(key, i)
-
    		}
 	}
 
@@ -40,8 +76,9 @@ module.exports = class MrCrawler {
 	read(cb){
 		this.headlessBrowser.launch()
 		.then(() => {
-			this.prepare(this.schema);			
-			this.deliverObj(cb);
+			this.prepare(this.schema);
+			console.log(JSON.stringify(this.schema))
+			// this.deliverObj(cb);
 		});
 	}
 

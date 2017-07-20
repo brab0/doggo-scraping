@@ -6,15 +6,13 @@
 			"set" : {
 				"property" : "categories",
 				"set" : [{
-					"property" : "link",
-					"from" : "document.querySelector('.itens_menu a').getAttribute('href')"
-				}, {
-					"property" : "title",
-					"from" : "document.querySelector('.itens_menu a').textContent"
-				}, {
 					"property" : "items",
 					"goto" : {
 						"url" : "document.querySelector('.itens_menu a').getAttribute('href')",
+						"set" : {
+							"property" : "author",
+							"from" : "document.querySelector('.caixa_produtos_direita p').textContent"
+						},
 						"iterate" : {
 							"in" : "document.querySelector('.caixa_produtos .box a')",
 							"goto" : {
@@ -32,6 +30,12 @@
 							}
 						}
 					}
+				}, {
+					"property" : "link",
+					"from" : "document.querySelector('.itens_menu a').getAttribute('href')"
+				}, {
+					"property" : "title",
+					"from" : "document.querySelector('.itens_menu a').textContent"
 				}]
 			}
 		}
