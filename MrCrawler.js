@@ -54,8 +54,8 @@ module.exports = class MrCrawler {
          console.log(items)
          return this.loop(items, middleware, 0)
       })
-	}
-
+   }
+   
    loop(items, middleware, index) {
 		return new Promise((resolve, reject) => {
 
