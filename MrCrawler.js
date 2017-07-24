@@ -7,6 +7,7 @@ module.exports = class MrCrawler {
       this.protocol = {};
       this.chrome = {};
       this.page = {};
+      this.DOM = {};
       this.runtime = {};
 	}
 
@@ -21,56 +22,108 @@ module.exports = class MrCrawler {
          return cdp({port: chrome.port})
       })
       .then(protocol => {
-         const {Page, Runtime} = this.protocol = protocol;
-         this.page = Page;
+         const {Page, Runtime, DOM} = this.protocol = protocol;
+         
+         this.page = Page;         
          this.runtime = Runtime;
+         this.DOM = DOM;
 
-         return Promise.all([this.page.enable(), this.runtime.enable()]);
+         return Promise.all([this.page.enable(), this.runtime.enable(), this.DOM.enable()]);
      })
      .then(() => this.navigate(url));
 	}
 
+    stop(){
+      this.protocol.close();
+      this.chrome.kill();
+   }
+
    navigate(url){
       return this.page.navigate({url: url})
       .then(res => this.page.loadEventFired());
-   }
+   }   
 
-   evaluate(expression){
-      return this.runtime.evaluate({
-         expression: expression,
-         returnByValue : true
-      });
-   }
-
-   iterate(pattern, middleware) {
-		return this.evaluate(pattern)
-      .then(res => {
-         console.log(res.result.value[0].length)
-         return Array.from(res.result.value).map(function(element) {
-            return element
-         });
-      })
-      .then(items => {
-         console.log(items)
-         return this.loop(items, middleware, 0)
-      })
-   }
+   iterate(selector, middleware) {
+		return this.evaluate(selector)
+        .then(res => {
+            console.log(res)
+            return res;
+        })
+        .then(items => {
+            console.log(items)
+            return this.loop(items, middleware, 0)
+        })
+    }
    
-   loop(items, middleware, index) {
+    loop(items, middleware, index) {
 		return new Promise((resolve, reject) => {
 
-         middleware(items)
+            middleware(items)
 
-         if(index === items[index].result.length){
-            resolve();
-         } else {
-            this.loop(items, middleware, ++index)
-         }
+            if(index === items[index].result.length){
+                resolve();
+            } else {
+                this.loop(items, middleware, ++index)
+            }
 		});
 	}
 
-   stop(){
-      this.protocol.close();
-      this.chrome.kill();
+    evaluate(selector){
+        return this.DOM.getDocument()
+        .then(result => result.root.nodeId)
+        .then(nodeId => this.DOM.querySelectorAll({
+            nodeId: nodeId,
+            selector: selector
+        }))
+        .then(result => this.prepareNodes(result.nodeIds));
+   }
+
+   prepareNodes(result){
+       console.log(result[0])
+       this.runtime.evaluate({ expression : "document.querySelectorAll('.itens_menu a')" })
+       .then(res => {
+           this.runtime.callFunctionOn(res.result.objectId)
+           .then(res => {
+                console.log(res)
+           })           
+       })
+    //    return this.getAttrs(result)
+    //    .then(res => this.getText(result));
+   }
+
+   getAttrs(result){
+        let promises = result.map(id => this.DOM.getAttributes({nodeId:id}));
+
+        return Promise.all(promises)
+        .then(items => items.map(item => item.attributes))
+        .then(items => this.setAttrs(items))
+   }
+
+   getText(result){
+        let promises = result.map(id => this.DOM.getAttributes({nodeId:id}));
+
+        return Promise.all(promises)
+        .then(items => {
+            console.log(item)
+            items.map(item => item.attributes)
+        })
+        .then(items => this.setAttrs(items))
+   }
+
+   setAttrs(items){
+       return items.map(item => {            
+            return item.reduce(function(arr, cur, index, array) {                    
+                if(index % 2 == 0){                    
+                    let n = {};
+                    n[cur] = {};
+
+                    return Object.assign(n, arr);
+                } else {
+                    arr[array[index - 1]] = cur;
+
+                    return arr;
+                }               
+            }, {})
+        });
    }
 }

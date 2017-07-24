@@ -4,15 +4,15 @@ const crawler = new MrCrawler();
 
 const SCHEMA = {
 	categories : {
-		element : "document.querySelectorAll('.itens_menu a')",
-		title : "document.querySelectorAll('.itens_menu a').textContent",
-		link : "document.querySelectorAll('.itens_menu a').getAttribute('href')",
+		element : ".itens_menu a",
+		title : ".itens_menu a",
+		link : ".itens_menu a",
 	},
 	books : {
-		element : "document.querySelectorAll('.caixa_produtos .box a')",
-		title : "document.querySelector('.caixa_produtos_direita h2').textContent",
-		image : "document.querySelector('.caixa_produtos_esquerda_foto .foto_detalhe a').getAttribute('href')",
-		author : "document.querySelector('.caixa_produtos_direita p:nth-child(0)').textContent"
+		element : ".caixa_produtos .box a",
+		title : ".caixa_produtos_direita h2",
+		image : ".caixa_produtos_esquerda_foto .foto_detalhe a",
+		author : ".caixa_produtos_direita p:nth-child(0)'"
 	}
 }
 
@@ -22,8 +22,7 @@ crawler.go("http://editoraunicamp.com.br/")
 .then(() => setBooksByCategory());
 
 function setBooksByCategory(){
-	return crawler.iterate(SCHEMA.categories.element, itemCategory => {
-		console.log(itemCategory)
+	return crawler.iterate(SCHEMA.categories.element, itemCategory => {		
 		return getCategoryDetails()
 		.then(category => {
 			categories.push({
