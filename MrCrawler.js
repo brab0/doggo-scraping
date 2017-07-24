@@ -1,77 +1,76 @@
-const HeadlessBrowser = require('./HeadlessBrowser');
-const ObjectNode = require('./ObjectNode');
+const chromeLauncher = require('chrome-launcher');
+const cdp = require('chrome-remote-interface');
 
 module.exports = class MrCrawler {
 
-	constructor(schema) {
-		this.headlessBrowser = new HeadlessBrowser();
-		this.operations = [];
-		this.schema = schema;
+  	constructor(){
+      this.protocol = {};
+      this.chrome = {};
+      this.page = {};
+      this.runtime = {};
 	}
 
-	/*
-	*	extracts and format operations from schema to be executed
-	*/
+	go(url) {
+      return chromeLauncher.launch({
+         chromeFlags: ['--disable-gpu','--headless']
+      })
+      .then(chrome => {
+         return this.chrome = chrome;
+      })
+      .then(chrome => {
+         return cdp({port: chrome.port})
+      })
+      .then(protocol => {
+         const {Page, Runtime} = this.protocol = protocol;
+         this.page = Page;
+         this.runtime = Runtime;
 
-	prepare(schema) {
-		for (var key in schema) {
-			if (typeof schema[key] == "object") {
-				if(ObjectNode.isAction(key)) {
-					this.operations.push(ObjectNode.setAction(key, this.headlessBrowser));
-				}
-
-				this.prepare(schema[key]);
-
-			} else {
-				this.operations[this.operations.length - 1][key] = schema[key]
-			}
-   		}
+         return Promise.all([this.page.enable(), this.runtime.enable()]);
+     })
+     .then(() => this.navigate(url));
 	}
 
-	/*
-	*	starts headless-chrome and pretends a reader for client use
-	*/
+   navigate(url){
+      return this.page.navigate({url: url})
+      .then(res => this.page.loadEventFired());
+   }
 
-	read(cb){
-		this.headlessBrowser.launch()
-		.then(() => {
-			this.prepare(this.schema);
-			this.deliverObj(cb);
+   evaluate(expression){
+      return this.runtime.evaluate({
+         expression: expression,
+         returnByValue : true
+      });
+   }
+
+   iterate(pattern, middleware) {
+		return this.evaluate(pattern)
+      .then(res => {
+         console.log(res.result.value[0].length)
+         return Array.from(res.result.value).map(function(element) {
+            return element
+         });
+      })
+      .then(items => {
+         console.log(items)
+         return this.loop(items, middleware, 0)
+      })
+	}
+
+   loop(items, middleware, index) {
+		return new Promise((resolve, reject) => {
+
+         middleware(items)
+
+         if(index === items[index].result.length){
+            resolve();
+         } else {
+            this.loop(items, middleware, ++index)
+         }
 		});
 	}
 
-	/*
-	*	The real reader. After all operations are collected, call them
-	*	and return an object
-	*/
-
-	deliverObj(cb, counter = 0) {
-		this.runOperations(res => {
-
-			if(res && res != undefined){
-				cb(res, counter);
-				this.deliverObj(cb, ++counter)
-			} else {
-				console.log('fim')
-				// this.headlessBrowser.quit()
-			}
-		})
-	}
-
-	/*
-	*	iterate over all instrunction sequentially and then returns the
-	*   gotten object back to the client
-	*/
-
-	runOperations(cb, index = 0) {
-		return this.operations[index].exec()
-		.then(res => {
-			if(parseInt(this.operations.length - index) > 0){
-				// console.log(res)
-				this.runOperations(++index);
-			} else {
-				cb(res)
-			}
-		});
-	}
+   stop(){
+      this.protocol.close();
+      this.chrome.kill();
+   }
 }
