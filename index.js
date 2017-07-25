@@ -4,7 +4,7 @@ const crawler = new MrCrawler();
 
 const SCHEMA = {
 	categories : {
-		element : ".itens_menu a",
+		element : "",
 		title : ".itens_menu a",
 		link : ".itens_menu a",
 	},
@@ -17,50 +17,34 @@ const SCHEMA = {
 }
 
 let categories = [];
+const baseUrl = "http://editoraunicamp.com.br/";
 
-crawler.go("http://editoraunicamp.com.br/")
-.then(() => setBooksByCategory());
+crawler.go(baseUrl)
+.then(() => {
+	crawler.iterate('.itens_menu a', (category, index) => {
+		const catLink = category.attr('href');
 
-function setBooksByCategory(){
-	return crawler.iterate(SCHEMA.categories.element, itemCategory => {		
-		return getCategoryDetails()
-		.then(category => {
-			categories.push({
-				title : category.title,
-				link : category.link,
-				books : getBooks(category)
-			});
+		categories.push({
+			title : category.text(),
+			link : catLink,
+			books : crawler.goto(baseUrl + catLink)
+			.then(() => {
+				let books = [];
+
+				return crawler.iterate('.caixa_produtos .box a', (book, i) => {
+					console.log(i, book.attr('href'))
+					books.push(book.attr('href'));
+					// crawler.evaluate(SCHEMA.books.link)
+					// .then(url => crawler.goto(url))
+					// .then(() => getBookDetails())
+					// .then(bookDetails => bookDetails);
+				})
+				.then(() => books)
+			})
 		});
-	});
-}
-
-function getCategoryDetails(){
-	const details = [
-		crawler.evaluate(SCHEMA.categories.title),
-		crawler.evaluate(SCHEMA.categories.link)
-	];
-
-	return Promise.all(details)
-	.then(detail => {
-		return {
-			title : detail[0],
-			link : detail[1]
-		}
-	});
-}
-
-function getBooks(category){
-	return crawler.evaluate(category.link)
-	.then(url => crawler.navigate(url))
-	.then(() => {
-		crawler.iterate(SCHEMA.books.element, book => {
-			crawler.evaluate(SCHEMA.books.link)
-			.then(url => crawler.navigate(url))
-			.then(() => getBookDetails())
-			.then(bookDetails => bookDetails);
-		});
-	});
-}
+	})
+	.then(() => console.log(categories));
+});
 
 function getBookDetails(){
 	const details = [
