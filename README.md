@@ -6,7 +6,7 @@ Doggo is a little friend to build scraping scripts easier.
 The main approach under Doggo Scraping scripts is to abstract semantically(*and programmatically*) things you don't need to worry about everytime you decide to make a new one by providing a super-api(*ironic content alert*) of methods made of: a starter(**wakeUp**) with a built-in *ender*, an iterator or loop(**iterate**), a redirector(**goto**) and a DOM evaluable(**eval**). Except for the last one, all of them are **chainable promises**.
 
 ### wakeUp(url, callback(doggoInstance))
-Lauches headless-chrome, calls **goto()**(since you have to work in a DOM's page anyway) and, after all promises inside the callback is resolved, orders doggo to **die()** (but he's just pretending...no, he's not!).
+Lauches headless-chrome, calls `goto()`(*since you have to work in a DOM's page anyway*) and, after all promises inside the callback is resolved, orders doggo to `die()`(*but he's just pretending...no, he's not!*).
 
 ```javascript
     doggo.wakeUp('http://initialurl.com/', callback(doggoInstance));
