@@ -12,17 +12,17 @@ Lauches headless-chrome, calls **goto()**(since you have to work in a DOM's page
     doggo.wakeUp('http://initialurl.com/', callback(doggoInstance));
 ```
 
-### iterate('query-selector', callback(iterationItem, index))
+### iterate(\'query-selector\', callback(iterationItem, index))
 ```javascript
     doggo.iterate('query-selector', callback(iterationItem, index));
 ```
 
-### goto('http://urltogoto.com/')
+### goto(\'http://urltogoto.com/\')
 ```javascript
     doggoInHome.goto('http://urltogoto.com/');
 ```
 
-### eval('query-selector')
+### eval(\'query-selector\')
 ```javascript
     doggoInBooks.eval('query-selector');
     doggoInBooks.eval(element)
