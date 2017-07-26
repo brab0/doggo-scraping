@@ -1,4 +1,4 @@
-# mr-crawler
+# Doggo Scraping
 
 ## Schema Structure   
 ```
