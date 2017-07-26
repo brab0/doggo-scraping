@@ -2,20 +2,20 @@ const cheerio = require('cheerio');
 
 module.exports = class Actions {
 
-  	constructor(sniffer, page, DOM, url){
+  	constructor(evaluator, page, DOM, url){
         this.page = page;
         this.DOM = DOM;
-        this.sniffer = sniffer;
+        this.evaluator = evaluator;
         this.url = url;
 	}
 
-   goto(url){
+   goto(url){        
         return this.page.navigate({url: url})
         .then(() => this.page.loadEventFired())
         .then(() => this.DOM.getDocument({ depth: -1 }))
         .then(rootNode => this.DOM.getOuterHTML({ nodeId: rootNode.root.nodeId }))
         .then(pageSource => cheerio.load(pageSource.outerHTML))
-        .then(sniffer => new Actions(sniffer, this.page, this.DOM, url));
+        .then(evaluator => new Actions(evaluator, this.page, this.DOM, url));
     }
 
     iterate(items, middleware){
@@ -27,12 +27,12 @@ module.exports = class Actions {
     }
 
     loop(items, middleware, index, cb, res = null){
-      if(index < this.sniffer(items).length){
-          try {
-              return middleware(this.sniffer(this.sniffer(items).get(index)), index)
+      if(index < this.evaluator(items).length){
+          if(middleware instanceof Promise){
+              return middleware(this.evaluator(this.evaluator(items).get(index)), index)
               .then(res => this.loop(items, middleware, ++index, cb, res))
-          } catch(err) {
-              middleware(this.sniffer(this.sniffer(items).get(index)), index)
+          } else {
+              middleware(this.evaluator(this.evaluator(items).get(index)), index)
               this.loop(items, middleware, ++index, cb, res)
           }
 
@@ -41,7 +41,7 @@ module.exports = class Actions {
       }
     }
 
-    find(selector){
-        return this.sniffer(selector);
+    eval(selector){
+        return this.evaluator(selector);
     }
 }
