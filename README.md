@@ -1,7 +1,7 @@
+<img src="https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg" width="100%">
 Doggo Scraping
 ==============
 Doggo is a little friend to help you make scraping scripts easier.
-![image](https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg)
 
 ## How it Works?
 The main approach under Doggo Scraping is to abstract semantically(*and programmatically*) things you don't need to worry about by providing a super-api(*ironic content alert*) of methods made of: a starter(**wakeUp**) with a built-in *ender*, a chainable iterator(**iterate**), a chainable redirector(**goto**) and a DOM evaluable(**eval**).
