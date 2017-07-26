@@ -8,20 +8,25 @@ The main approach under Doggo Scraping scripts is to abstract semantically(*and 
 ### wakeUp(url, callback(doggoInstance))
 Lauches headless-chrome, calls **goto()**(since you have to work in a DOM's page anyway) and, after all promises inside the callback is resolved, orders doggo to **die()** (but he's just pretending...no, he's not!).
 
-    doggo.wakeUp('http://initialurl.com/', callback(doggoInstance));
+```javascript
+    doggo.wakeUp('http://initialurl.com/', callback(doggoInstance));
+```
 
 ### iterate('query-selector', callback(iterationItem, index))
-
+```javascript
     doggo.iterate('query-selector', callback(iterationItem, index));
-    
+```
+
 ### goto('http://urltogoto.com/')
-
+```javascript
     doggoInHome.goto('http://urltogoto.com/');
-
+```
 
 ### eval('query-selector')
+```javascript
     doggoInBooks.eval('query-selector');
     doggoInBooks.eval(element)
+```
 
 ## Dependencies
 This projecto runs over a [headless-chrome](https://developers.google.com/web/updates/2017/04/headless-chrome) instance (yes, you gonna need **59+ chrome version**). To initialize it and make use of some [DevTools Protocol API](https://chromedevtools.github.io/devtools-protocol/) utilities, we're using in this project [lighthouse's](https://developers.google.com/web/tools/lighthouse/) [chrome-launcher](https://www.npmjs.com/package/chrome-launcher). But, for DOM's handling, we choose to work with [cheerio](https://github.com/cheeriojs/cheerio), which implements jQuery's core to make powerfull evaluations.
