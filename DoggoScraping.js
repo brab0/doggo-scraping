@@ -13,7 +13,7 @@ module.exports = class DoggoScraping {
       this.DOM = {};
 	}
 
-	run(url) {
+	wakeUp(url, middleware) {
         return chromeLauncher.launch({
             chromeFlags: ['--disable-gpu','--headless']
         })
@@ -31,7 +31,15 @@ module.exports = class DoggoScraping {
 
             return Promise.all([this.page.enable(), this.DOM.enable()]);
         })
-        .then(() => new Actions(null, this.page, this.DOM, url).goto(url));
+        .then(() => new Actions(null, this.page, this.DOM, url).goto(url))
+        .then(doggo => {
+           return middleware(doggo)
+            .then(res => {
+               this.die()
+
+               return res;
+            })
+        });
 	}
 
     die(){

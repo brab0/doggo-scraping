@@ -3,22 +3,21 @@ const doggo = new DoggoScraping();
 
 let count = 0;
 
-doggo.run('http://editoraunicamp.com.br/')
-.then(doggo => {
+doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
 
 	let categories = [];
 
-	return doggo.iterate('.itens_menu a', (category, index) => {
+	return doggoInHome.iterate('.itens_menu a', (category, index) => {
 
 		let books = [];
 
-		return doggo.goto(doggo.baseUrl + category.attr('href'))
-		.then(doggo => {
+		return doggoInHome.goto(doggoInHome.url + category.attr('href'))
+		.then(doggoInCategory => {
 
-			return doggo.iterate('.caixa_produtos .box a',
+			return doggoInCategory.iterate('.caixa_produtos .box a',
 			(book, i) => {
 
-				return doggo.goto(doggo.baseUrl + book.attr('href'))
+				return doggoInCategory.goto(doggoInCategory.url + book.attr('href'))
 				.then(doggo => {
 
 					books.push({
@@ -44,10 +43,12 @@ doggo.run('http://editoraunicamp.com.br/')
 			console.log(categories[categories.length - 1])
 
 			count += books.length;
+
+			return categories;
 		});
 	});
 })
-.then(() => {
-	console.log(count)
-	doggo.die()
+.then(categories => {
+	console.log(categories.length + ' categorias lidas.')
+	console.log(count + ' livros lidos.')
 });

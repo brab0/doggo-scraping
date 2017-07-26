@@ -7,7 +7,7 @@ module.exports = class Actions {
         this.page = page;
         this.DOM = DOM;
         this.sniffer = sniffer;
-        this.baseUrl = url;
+        this.url = url;
 	}
 
    goto(url){
@@ -16,7 +16,7 @@ module.exports = class Actions {
         .then(() => this.DOM.getDocument({ depth: -1 }))
         .then(rootNode => this.DOM.getOuterHTML({ nodeId: rootNode.root.nodeId }))
         .then(pageSource => cheerio.load(pageSource.outerHTML))
-        .then(sniffer => new Actions(sniffer, this.page, this.DOM, this.baseUrl));
+        .then(sniffer => new Actions(sniffer, this.page, this.DOM, url));
     }
 
     iterate(items, middleware){
@@ -29,14 +29,8 @@ module.exports = class Actions {
 
     loop(items, middleware, index, cb, res = null){
       if(index < this.sniffer(items).length){
-          try {
-              middleware(this.sniffer(this.sniffer(items).get(index)), index)
-              .then(res => this.loop(items, middleware, ++index, cb, res))
-          } catch(err) {
-              middleware(this.sniffer(this.sniffer(items).get(index)), index)
-              this.loop(items, middleware, ++index, cb, res)
-          }
-
+         middleware(this.sniffer(this.sniffer(items).get(index)), index)
+         .then(res => this.loop(items, middleware, ++index, cb, res))
       } else {
           cb(res);
       }
