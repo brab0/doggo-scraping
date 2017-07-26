@@ -1,12 +1,16 @@
 Doggo Scraping
 ==============
-Doggo is a little friend to build scraping scripts easier.
+Doggo is a little friend to help you make scraping scripts easier.
 
 ## How it Works?
-The main approach under Doggo Scraping scripts is to abstract semantically(*and programmatically*) things you don't need to worry about everytime you decide to make a new one by providing a super-api(*ironic content alert*) of methods made of: a starter(**wakeUp**) with a built-in *ender*, an iterator or loop(**iterate**), a redirector(**goto**) and a DOM evaluable(**eval**). Except for the last one, all of them are **chainable promises**.
+The main approach under Doggo Scraping is to abstract semantically(*and programmatically*) things you don't need to worry about by providing a super-api(*ironic content alert*) of methods made of: a starter(**wakeUp**) with a built-in *ender*, a chainable iterator(**iterate**), a chainable redirector(**goto**) and a DOM evaluable(**eval**).
 
+### Dependencies
+This project runs over a [headless-chrome](https://developers.google.com/web/updates/2017/04/headless-chrome) instance (yes, you gonna need **59+ chrome version**). To initialize it and make use of some [DevTools Protocol API](https://chromedevtools.github.io/devtools-protocol/) utilities, we're using in this project [lighthouse's](https://developers.google.com/web/tools/lighthouse/) [chrome-launcher](https://www.npmjs.com/package/chrome-launcher). But, for DOM's handling, we choose to work with [cheerio](https://github.com/cheeriojs/cheerio), which implements jQuery's core to make powerfull evaluations.
+
+## API
 ### wakeUp(url, callback(doggoInstance))
-Lauches headless-chrome, calls `goto()`(*since you have to work in a DOM's page anyway*) and, after all promises inside the callback is resolved, orders doggo to `die()`(*but he's just pretending...no, he's not!*).
+A promise that lauches headless-chrome, calls `goto()`(*since you have to work in a DOM's page anyway*) and, after orders doggo to `die()`(*but he's just pretending...no, he's not!*).
 
 ```javascript
     doggo.wakeUp('http://initialurl.com/', callback(doggoInstance));
@@ -28,13 +32,59 @@ Lauches headless-chrome, calls `goto()`(*since you have to work in a DOM's page 
     doggoInBooks.eval(element)
 ```
 
-## Dependencies
-This projecto runs over a [headless-chrome](https://developers.google.com/web/updates/2017/04/headless-chrome) instance (yes, you gonna need **59+ chrome version**). To initialize it and make use of some [DevTools Protocol API](https://chromedevtools.github.io/devtools-protocol/) utilities, we're using in this project [lighthouse's](https://developers.google.com/web/tools/lighthouse/) [chrome-launcher](https://www.npmjs.com/package/chrome-launcher). But, for DOM's handling, we choose to work with [cheerio](https://github.com/cheeriojs/cheerio), which implements jQuery's core to make powerfull evaluations.
-
 ## Instalation
-    npm install doggo-scraping --save
+    $ npm install doggo-scraping --save
     
 ## Hands On
+
+### Scraping 01:
+
+```javascript
+    const DoggoScraping = require('../DoggoScraping');
+    const doggo = new DoggoScraping();
+
+    doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
+
+        let categories = [];
+
+        return doggoInHome.iterate('.itens_menu a', (category, index) => {
+
+            let books = [];
+
+            return doggoInHome.goto(doggoInHome.url + category.attr('href'))
+            .then(doggoInCategory => {
+
+                return doggoInCategory.iterate('.caixa_produtos .box a',
+                (book, i) => {
+
+                    return doggoInCategory.goto(doggoInHome.url + book.attr('href'))
+                    .then(doggoInBooks => {
+                        books.push({
+                            url : book.attr('href'),
+                            title : doggoInBooks.eval('.caixa_produtos_direita h2').text(),
+                            image : doggoInBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href'),
+                            cat: category.text()
+                        });
+                            
+                        return books;
+                    });
+                });
+            })
+            .then(books => {
+                categories.push({
+                title : category.text(),
+                link : category.attr('href'),
+                books : {
+                    length: books.length,
+                    itens : books
+                }
+            });
+
+            console.log(categories[categories.length - 1])
+        });
+    });
+});
+```
 
 ## License
 ```
