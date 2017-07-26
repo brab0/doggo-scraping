@@ -21,8 +21,7 @@ after returning from callback, orders doggo to `die()`(*but he's just pretending
 ...or even:
 ```javascript
     doggo.wakeUp('http://initialurl.com/', doggoInstance => {
-        const greeting = `Hello, Doggo! Your home now is ${doggoInstance.url}`;
-        return greeting;
+        return `Hello, Doggo! Your home now is ${doggoInstance.url}`;
     })
     .then(greeting => console.log(greeting));
 ```
