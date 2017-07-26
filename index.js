@@ -1,41 +1,53 @@
 const DoggoScraping = require('./DoggoScraping');
 const doggo = new DoggoScraping();
 
-const baseUrl = "http://editoraunicamp.com.br/";
+let count = 0;
 
-doggo.run(baseUrl)
-.then(sniffer => {
-	
+doggo.run('http://editoraunicamp.com.br/')
+.then(doggo => {
+
 	let categories = [];
 
-	sniffer.iterate('.itens_menu a', (category, index) => {
-		
-		categories.push({
-			title : category.text(),
-			link : category.attr('href'),
-			books : []
-		})
+	return doggo.iterate('.itens_menu a', (category, index) => {
 
-		console.log(index, category.text())
+		let books = [];
 
-		return sniffer.goto(baseUrl + category.attr('href'))
-		.then(sniffer => {
+		return doggo.goto(doggo.baseUrl + category.attr('href'))
+		.then(doggo => {
 
-			return sniffer.iterate('.caixa_produtos .box a', (book, i) => {
-				
-				return sniffer.goto(baseUrl + book.attr('href'))
-				.then(sniffer => {
-					let newBook = {
+			return doggo.iterate('.caixa_produtos .box a',
+			(book, i) => {
+
+				return doggo.goto(doggo.baseUrl + book.attr('href'))
+				.then(doggo => {
+
+					books.push({
 						url : book.attr('href'),
-						title : sniffer.find('.caixa_produtos_direita h2').text(),
-						image : sniffer.find('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
-					};
+						title : doggo.find('.caixa_produtos_direita h2').text(),
+						image : doggo.find('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
+					});
 
-					console.log(newBook)
-
-					categories[categories.length - 1].books.push(newBook);						
+					return books;
 				});
 			});
-		});		
+		})
+		.then(books => {
+			categories.push({
+				title : category.text(),
+				link : category.attr('href'),
+				books : {
+					length: books.length,
+					itens : books
+				}
+			});
+
+			console.log(categories[categories.length - 1])
+
+			count += books.length;
+		});
 	});
+})
+.then(() => {
+	console.log(count)
+	doggo.die()
 });

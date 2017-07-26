@@ -2,7 +2,7 @@ require('events').EventEmitter.defaultMaxListeners = 0;
 
 const chromeLauncher = require('chrome-launcher');
 const cdp = require('chrome-remote-interface');
-const Sniffer = require('./Sniffer');
+const Actions = require('./Actions');
 
 module.exports = class DoggoScraping {
 
@@ -13,7 +13,7 @@ module.exports = class DoggoScraping {
       this.DOM = {};
 	}
 
-	run(url) {        
+	run(url) {
         return chromeLauncher.launch({
             chromeFlags: ['--disable-gpu','--headless']
         })
@@ -31,10 +31,10 @@ module.exports = class DoggoScraping {
 
             return Promise.all([this.page.enable(), this.DOM.enable()]);
         })
-        .then(() => new Sniffer(null, this.page, this.DOM).goto(url));
+        .then(() => new Actions(null, this.page, this.DOM, url).goto(url));
 	}
 
-    stop(){
+    die(){
         this.protocol.close();
         this.chrome.kill();
     }
