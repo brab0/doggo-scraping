@@ -17,7 +17,7 @@ Lauches headless-chrome, calls **goto()**(since you have to work in a DOM's page
     doggo.iterate('query-selector', callback(iterationItem, index));
 ```
 
-### goto(\'http://urltogoto.com/')
+### goto("http://urltogoto.com/")
 ```javascript
     doggoInHome.goto('http://urltogoto.com/');
 ```
