@@ -2,7 +2,7 @@
 
 Doggo Scraping
 ==============
-Doggo is a little friend to help you make scraping scripts easier.
+Doggo is a little friend to help you make scraping scripts a lot easier.
 
 ## How it Works?
 The main approach under Doggo Scraping is to abstract semantically(*and programmatically*) things you don't need to worry about by providing a super-api(*ironic content alert*) of methods made of: a starter(**wakeUp**) with a built-in *ender*, a chainable iterator(**iterate**), a chainable redirector(**goto**) and a DOM evaluable(**eval**).
@@ -12,38 +12,52 @@ This project runs over a [headless-chrome](https://developers.google.com/web/upd
 
 ## API
 ### wakeUp(url, callback(doggoInstance))
-A promise that internally lauches headless-chrome, calls `goto(url)`(*since you have to work in a DOM's page anyway*) and,
-after returning from callback, orders doggo to `die()`(*but he's just pretending...no, he's not!*).
+The *promise* to initialyze the scraping block. Internally `lauches headless-chrome`, calls `goto(url)`(*since you have to work in a DOM's page anyway*) and then, after the callback returns, orders doggo to `die()`(*but he's just pretending...no, he's not!*).
 
 ```javascript
-    doggo.wakeUp('http://initialurl.com/', doggoInstance => {
-        console.log(`Hello, Doggo! Your home now is ${doggoInstance.url}`);
+    doggo.wakeUp('http://home.com/', doggoAtHome => {
+        // scraping content goes here
+        console.log(`Hello, Doggo! Your home now is ${doggoAtHome.url}`);
     });
 ```
 ...or even:
+
 ```javascript
-    doggo.wakeUp('http://initialurl.com/', doggoInstance => {
-        return `Hello, Doggo! Your home now is ${doggoInstance.url}`;
+    doggo.wakeUp('http://home.com/', doggoAtHome => {
+        // scraping content goes here
+        return `Hello, Doggo! Your home now is ${doggoAtHome.url}`;
     })
     .then(greeting => console.log(greeting));
 ```
 
-### goto('http://urltogoto.com/')
+### goto(url)
+Method(Promise) chainable to open a new page. Once a page is ready, it resolves a new instance of doggo with its methods according to the new DOM's context and/or iteration. Furthermore, persists the **url** param. 
+**OBS:** Since `wakeUp()` callback receive an instance of doggo provided by a `goto()` method, you gonna see the next example is pretty much the same from above, except for the `then()`:
 
 ```javascript
-    doggoInHome.goto('http://urltogoto.com/');
+    doggoAtHome.goto('http://beach.com/')
+    .then(doggoAtBeach => {
+        // scraping content goes here
+        return `Hello, Doggo! Your home now is ${doggoAtBeach.url}`;
+    })
+    .then(greeting => console.log(greeting));
+```
+...or maybe a chain of them:
+
+```javascript
+    doggoAtHome.goto('http://beach.com/')
+    .then(doggoAtBeach => doggoAtBeach.goto('http://garden.com/')
+    .then(doggoAtGarden => doggoAtGarden.goto('http://pool.com/')
+    .then(doggoAtPool => `Dogo loves pool`)
+    .then(msg => console.log(msg));
 ```
 
-**OBS**: because `wakeUp()` method also calls `goto()`, this last one provides an instance of itself to the callback, which allow us to get the access needed to our methods.
-
-
-
-### iterate(\'query-selector\', callback(iterationItem, index))
+### iterate('query-selector', callback(iterationItem, index))
 ```javascript
     doggo.iterate('query-selector', callback(iterationItem, index));
 ```
 
-### eval(\'query-selector\')
+### eval('query-selector')
 ```javascript
     doggoInBooks.eval('query-selector');
     doggoInBooks.eval(element)
