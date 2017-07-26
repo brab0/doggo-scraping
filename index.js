@@ -47,8 +47,4 @@ doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
 			return categories;
 		});
 	});
-})
-.then(categories => {
-	console.log(categories.length + ' categorias lidas.')
-	console.log(count + ' livros lidos.')
 });

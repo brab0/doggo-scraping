@@ -13,6 +13,10 @@ module.exports = class DoggoScraping {
       this.DOM = {};
 	}
 
+   /*
+   * Initialize launcher to open headless chrome
+   */
+
 	wakeUp(url, middleware) {
         return chromeLauncher.launch({
             chromeFlags: ['--disable-gpu','--headless']
@@ -21,7 +25,7 @@ module.exports = class DoggoScraping {
             return this.chrome = chrome;
         })
         .then(chrome => {
-            return cdp({port: chrome.port})
+            return cdp({port: chrome.port})  // returns protocol to expose api
         })
         .then(protocol => {
             const {Page, DOM} = this.protocol = protocol;
@@ -31,16 +35,37 @@ module.exports = class DoggoScraping {
 
             return Promise.all([this.page.enable(), this.DOM.enable()]);
         })
-        .then(() => new Actions(null, this.page, this.DOM, url).goto(url))
+        .then(() => {
+           /*
+           *   instantiate an Actions object to call goto method after
+           *   chrome is ready. This method also instantiate itself
+           *   to expose these actions in the right context.
+           */
+           return new Actions(null, this.page, this.DOM, url).goto(url)
+        })
         .then(doggo => {
-           return middleware(doggo)
-            .then(res => {
-               this.die()
 
-               return res;
-            })
+            /*
+            *  Decides which handler should be used. If returns a Promise,
+            *  then use Try middleware. Else execute as a normal function
+            */
+
+           try{
+              return middleware(doggo)    // returning to allow the wakeUp promise chain
+               .then(res => {
+                  this.die();             // after everything is done, terminate laucher
+                  return res;             // respose to the wakeUp promise chain
+               })
+            } catch(ex){
+               middleware(doggo);         // non-promise response
+               this.die()                 // after everything is done, terminate laucher
+            }
         });
 	}
+
+   /*
+   * terminate launcher
+   */
 
     die(){
         this.protocol.close();

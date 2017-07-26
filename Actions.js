@@ -1,4 +1,3 @@
-'use strict'
 const cheerio = require('cheerio');
 
 module.exports = class Actions {
@@ -29,8 +28,14 @@ module.exports = class Actions {
 
     loop(items, middleware, index, cb, res = null){
       if(index < this.sniffer(items).length){
-         middleware(this.sniffer(this.sniffer(items).get(index)), index)
-         .then(res => this.loop(items, middleware, ++index, cb, res))
+          try {
+              return middleware(this.sniffer(this.sniffer(items).get(index)), index)
+              .then(res => this.loop(items, middleware, ++index, cb, res))
+          } catch(err) {
+              middleware(this.sniffer(this.sniffer(items).get(index)), index)
+              this.loop(items, middleware, ++index, cb, res)
+          }
+
       } else {
           cb(res);
       }
