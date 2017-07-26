@@ -10,20 +10,36 @@ This project runs over a [headless-chrome](https://developers.google.com/web/upd
 
 ## API
 ### wakeUp(url, callback(doggoInstance))
-A promise that lauches headless-chrome, calls `goto()`(*since you have to work in a DOM's page anyway*) and, after orders doggo to `die()`(*but he's just pretending...no, he's not!*).
+A promise that internally lauches headless-chrome, calls `goto(url)`(*since you have to work in a DOM's page anyway*) and,
+after returns from callback, orders doggo to `die()`(*but he's just pretending...no, he's not!*).
 
 ```javascript
-    doggo.wakeUp('http://initialurl.com/', callback(doggoInstance));
+    doggo.wakeUp('http://initialurl.com/', doggoInstance => {
+        console.log(`Hello, Doggo! Your home now is ${doggoInstance.url}`);
+    });
 ```
+...or even:
+```javascript
+    doggo.wakeUp('http://initialurl.com/', doggoInstance => {
+        const greeting = `Hello, Doggo! Your home now is ${doggoInstance.url}`;
+        return greeting;
+    })
+    .then(greeting => console.log(greeting));
+```
+
+### goto('http://urltogoto.com/')
+
+```javascript
+    doggoInHome.goto('http://urltogoto.com/');
+```
+
+**OBS**: because `wakeUp()` method also calls `goto()`, this last one provides an instance of itself to the callback, which allow us to get the access needed to our methods.
+
+
 
 ### iterate(\'query-selector\', callback(iterationItem, index))
 ```javascript
     doggo.iterate('query-selector', callback(iterationItem, index));
-```
-
-### goto('http://urltogoto.com/')
-```javascript
-    doggoInHome.goto('http://urltogoto.com/');
 ```
 
 ### eval(\'query-selector\')
