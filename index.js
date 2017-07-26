@@ -17,14 +17,16 @@ doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
 			return doggoInCategory.iterate('.caixa_produtos .box a',
 			(book, i) => {
 
-				return doggoInCategory.goto(doggoInCategory.url + book.attr('href'))
-				.then(doggo => {
+				return doggoInCategory.goto(doggoInHome.url + book.attr('href'))
+				.then(doggoInBooks => {
 
 					books.push({
 						url : book.attr('href'),
-						title : doggo.find('.caixa_produtos_direita h2').text(),
-						image : doggo.find('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
+						title : doggoInBooks.find('.caixa_produtos_direita h2').text(),
+						image : doggoInBooks.find('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
 					});
+
+					console.log(books)
 
 					return books;
 				});
