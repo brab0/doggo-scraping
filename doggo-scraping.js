@@ -48,20 +48,23 @@ module.exports = class DoggoScraping {
             /*
             *  Decides which handler should be used. If returns a Promise,
             *  then use Try middleware. Else execute as a normal function
-            */
+            */            
 
-            console.log(middleware instanceof Promise)
-
-            if(middleware instanceof Promise){
-                console.log('asd')
+            if(middleware instanceof Promise){                
                 return middleware(doggo)          // returning to allow the wakeUp promise chain
                 .then(res => {
                     this.die();                   // after everything is done, terminate laucher
                     return res;                   // respose to the wakeUp promise chain
                 })
-            } else {                
-                this.die();                       // after everything is done, terminate laucher
-                return middleware(doggo);         // non-promise response
+            } else {
+                return new Promise(resolve => {
+                    resolve(middleware(doggo));   // non-promise response
+                })
+                .then(res => {
+                    this.die();                   // after everything is done, terminate laucher
+                    return res;                   // respose to the wakeUp promise chain
+                })
+                
             }
         });
 	}

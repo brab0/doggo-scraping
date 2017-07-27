@@ -32,8 +32,12 @@ module.exports = class Actions {
               return middleware(this.evaluator(this.evaluator(items).get(index)), index)
               .then(res => this.loop(items, middleware, ++index, cb, res))
           } else {
-              middleware(this.evaluator(this.evaluator(items).get(index)), index)
-              this.loop(items, middleware, ++index, cb, res)
+                return new Promise(resolve => {
+                    resolve(middleware(this.evaluator(this.evaluator(items).get(index)), index));   // non-promise response
+                })
+                .then(res => {
+                    this.loop(items, middleware, ++index, cb, res)
+                })              
           }
 
       } else {
