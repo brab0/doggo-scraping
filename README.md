@@ -16,7 +16,7 @@ The *promise* to initialyze the scraping block. Internally `lauches headless-chr
 
 ```javascript
     doggo.wakeUp('http://home.com/', doggoAtHome => {
-        // scraping content goes here
+        // scraping script goes here
         console.log(`Hello, Doggo! Your home now is ${doggoAtHome.url}`);
     });
 ```
@@ -24,7 +24,7 @@ The *promise* to initialyze the scraping block. Internally `lauches headless-chr
 
 ```javascript
     doggo.wakeUp('http://home.com/', doggoAtHome => {
-        // scraping content goes here
+        // scraping script goes here
         return `Hello, Doggo! Your home now is ${doggoAtHome.url}`;
     })
     .then(greeting => console.log(greeting));
@@ -35,9 +35,9 @@ Method(Promise) chainable to open a new page. Once a page is ready, it resolves 
 **OBS:** Since `wakeUp()` callback receive an instance of doggo provided by a `goto()` method, you gonna see the next example is pretty much the same from above, except for the `then()`:
 
 ```javascript
-    doggoAtHome.goto('http://beach.com/')
+    return doggoAtHome.goto('http://beach.com/')
     .then(doggoAtBeach => {
-        // scraping content goes here
+        // scraping script goes here
         return `Hello, Doggo! Your home now is ${doggoAtBeach.url}`;
     })
     .then(greeting => console.log(greeting));
@@ -45,16 +45,18 @@ Method(Promise) chainable to open a new page. Once a page is ready, it resolves 
 ...or maybe a chain of them:
 
 ```javascript
-    doggoAtHome.goto('http://beach.com/')
-    .then(doggoAtBeach => doggoAtBeach.goto('http://garden.com/')
-    .then(doggoAtGarden => doggoAtGarden.goto('http://pool.com/')
-    .then(doggoAtPool => `Dogo loves pool`)
-    .then(msg => console.log(msg));
+    return doggoAtHome.goto('https://www.beach.com/')
+	   .then(doggoAtBeach => doggoAtBeach.goto('https://www.garden.com/'))
+    .then(doggoAtGarden => doggoAtGarden.goto('http://pool.com/'))
+    .then(doggoAtPool => `Doggo loves pool`)
+   	.then(msg => console.log(msg));
 ```
 
 ### iterate('query-selector', callback(iterationItem, index))
 ```javascript
-    doggo.iterate('query-selector', callback(iterationItem, index));
+    doggo.iterate('.doggo-class a', (iterationItem, index) => {
+         
+    });
 ```
 
 ### eval('query-selector')
