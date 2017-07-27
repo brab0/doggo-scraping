@@ -58,76 +58,41 @@ Method to open a new page. Once a page is ready, it resolves a new instance of d
 ...
 ```
 
-### iterate('query-selector', callback(item, index)).then(function(){})
-Our iterator method (also a Promise), 
+### eval('selector')
+Evaluates a selector (according to instance context) and returns a "jquery element".
 ```javascript
 ...
-    doggo.iterate('.doggo-class a', (iterationItem, index) => {
-         
-    });
+    let goodBoy = doggoAtHome.eval('.good-boy');
+    console.log(goodBoy.attr('href'))
 ...
 ```
 
-### eval('query-selector')
+### iterate('selector', callback(item, index)).then(function(){})
+Our iterator method (also a Promise), receives a selector to iterate over it, returning on each iteration, item by item as "jQuery element" (internally calls `eval('selector')`).
+
 ```javascript
 ...
-    doggoInBooks.eval('query-selector');
-    doggoInBooks.eval(element)
+    return doggo.iterate('.doggo-class a', (item, index) => {
+        console.log(index, item.text())
+    }).then(() => console.log("That's it!"));
 ...
 ```
-**OBS**: As you may noticed in the isolated pieces of code above and will see at the **Hands On** section, the promises `goto()` and `iterate()` return itselves. That's because we need promises respect these "hierarchical" behaviour of our algorithms.
+
+**OBS**: As you may noticed in the isolated pieces of code above and will see at the **Hands On** section, the promises `goto()` and `iterate()` always return itselves. That's because we need promises respect a "hierarchical" behaviour (resolve to continue).
     
 ## Hands On
-
-### Scraping 01:
-
 ```javascript
-    const DoggoScraping = require('../DoggoScraping');
+    // since DoggoScraping is a class, after require it, we have to instatiate a new object
+    const DoggoScraping = require('DoggoScraping');
     const doggo = new DoggoScraping();
-
-    doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
-
-        let categories = [];
-
-        return doggoInHome.iterate('.itens_menu a', (category, index) => {
-
-            let books = [];
-
-            return doggoInHome.goto(doggoInHome.url + category.attr('href'))
-            .then(doggoInCategory => {
-
-                return doggoInCategory.iterate('.caixa_produtos .box a',
-                (book, i) => {
-
-                    return doggoInCategory.goto(doggoInHome.url + book.attr('href'))
-                    .then(doggoInBooks => {
-                        books.push({
-                            url : book.attr('href'),
-                            title : doggoInBooks.eval('.caixa_produtos_direita h2').text(),
-                            image : doggoInBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href'),
-                            cat: category.text()
-                        });
-                            
-                        return books;
-                    });
-                });
-            })
-            .then(books => {
-                categories.push({
-                title : category.text(),
-                link : category.attr('href'),
-                books : {
-                    length: books.length,
-                    itens : books
-                }
-            });
-
-            console.log(categories[categories.length - 1])
-        });
-    });
-});
+    
+    // start headless-chrome and open the initial page
+    doggo.wakeUp('', doggoAtHome => {
+        
+    })
 ```
 
+## That's all folks!
 <img src="https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg" width="100%">
 
 ## License
