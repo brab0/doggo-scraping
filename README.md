@@ -1,5 +1,3 @@
-<img src="https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg" width="100%">
-
 Doggo Scraping
 ==============
 Doggo is a little friend to help you make scraping scripts a lot easier.
@@ -118,6 +116,8 @@ Method(Promise) chainable to open a new page. Once a page is ready, it resolves 
     });
 });
 ```
+
+<img src="https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg" width="100%">
 
 ## License
 ```
