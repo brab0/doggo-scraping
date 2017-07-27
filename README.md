@@ -3,68 +3,79 @@ Doggo Scraping
 Doggo is a little friend to help you make scraping scripts a lot easier.
 
 ## How it Works?
-The main approach under Doggo Scraping is to abstract semantically(*and programmatically*) things you don't need to worry about by providing a super-api(*ironic content alert*) of methods made of: a starter(**wakeUp**) with a built-in *ender*, a chainable iterator(**iterate**), a chainable redirector(**goto**) and a DOM evaluable(**eval**).
+The main approach under Doggo Scraping is to abstract semantically(*and programmatically*) things you don't need to worry about by providing a super-api(*ironic content alert*) of methods made of: a starter(**wakeUp**) with a built-in *ender*, an iterator(**iterate**), a redirector(**goto**) and a DOM evaluable(**eval**).
 
 ### Dependencies
 This project runs over a [headless-chrome](https://developers.google.com/web/updates/2017/04/headless-chrome) instance (*you gonna need 59+ chrome version*). To initialize it and make use of some [DevTools Protocol API](https://chromedevtools.github.io/devtools-protocol/) utilities, we're using in this project [lighthouse's](https://developers.google.com/web/tools/lighthouse/) [chrome-launcher](https://www.npmjs.com/package/chrome-launcher). But, for the DOM's handling, we choose to work with [cheerio](https://github.com/cheeriojs/cheerio), which implements jQuery's core to make powerfull evaluations.
 
+## Instalation
+    $ npm install doggo-scraping --save
+
 ## API
-### wakeUp(url, callback(doggoInstance))
-The *promise* to initialyze the scraping block. Internally `lauches headless-chrome`, calls `goto(url)`(*since you have to work in a DOM's page anyway*) and then, after the callback returns, orders doggo to `die()`(*but he's just pretending...no, he's not!*).
+### wakeUp(url, callback(doggoInstance)).then(function(){})
+Method to initialyze the scraping block. Internally `lauches headless-chrome`, calls `goto(url)` method, execute a callback(where things happens) and after that, kill chrome instance ordering doggo to `die()`(*but he's just pretending...no, he's not!*).
 
 ```javascript
-    doggo.wakeUp('http://home.com/', doggoAtHome => {
+...
+    doggo.wakeUp('http://home.com/', doggoAtHome => {  // instance of Doggo of this page context
         // scraping script goes here
         console.log(`Hello, Doggo! Your home now is ${doggoAtHome.url}`);
     });
 ```
 ...or even:
-
 ```javascript
-    doggo.wakeUp('http://home.com/', doggoAtHome => {
+...
+    doggo.wakeUp('http://home.com/', doggoAtHome => {   // instance of Doggo of this page context
         // scraping script goes here
         return `Hello, Doggo! Your home now is ${doggoAtHome.url}`;
     })
     .then(greeting => console.log(greeting));
 ```
 
-### goto(url)
-Method(Promise) chainable to open a new page. Once a page is ready, it resolves a new instance of doggo with its methods according to the new DOM's context and/or iteration. Furthermore, persists the **url** param. 
-**OBS:** Since `wakeUp()` callback receive an instance of doggo provided by a `goto()` method, you gonna see the next example is pretty much the same from above, except for the `then()`:
+### goto(url).then(function(){})
+Method to open a new page. Once a page is ready, it resolves a new instance of doggo with its methods (*as you just saw above*) according to the new DOM's context. Furthermore, persists the **url** param. 
 
 ```javascript
-    return doggoAtHome.goto('http://beach.com/')
+...
+    return doggoAtHome.goto('http://beach.com/')
     .then(doggoAtBeach => {
         // scraping script goes here
         return `Hello, Doggo! Your home now is ${doggoAtBeach.url}`;
     })
     .then(greeting => console.log(greeting));
+...
 ```
 ...or maybe a chain of them:
-
 ```javascript
-    return doggoAtHome.goto('https://www.beach.com/')
-	   .then(doggoAtBeach => doggoAtBeach.goto('https://www.garden.com/'))
-    .then(doggoAtGarden => doggoAtGarden.goto('http://pool.com/'))
-    .then(doggoAtPool => `Doggo loves pool`)
-   	.then(msg => console.log(msg));
+...
+    return doggoAtHome.goto('https://www.beach.com/')
+    .then(doggoAtBeach => {
+		console.log(`Doggo is here: ${doggoAtBeach.url}`)
+		return doggoAtBeach.goto('http://pool.com/')
+	})
+	.then(doggoAtPool => console.log(`Now, doggo is here: ${doggoAtPool.url}`))
+   	.then(msg => console.log(`Doggo loves pool`));
+...
 ```
 
-### iterate('query-selector', callback(iterationItem, index))
+### iterate('query-selector', callback(item, index)).then(function(){})
+Our iterator method (also a Promise), 
 ```javascript
+...
     doggo.iterate('.doggo-class a', (iterationItem, index) => {
          
     });
+...
 ```
 
 ### eval('query-selector')
 ```javascript
+...
     doggoInBooks.eval('query-selector');
     doggoInBooks.eval(element)
+...
 ```
-
-## Instalation
-    $ npm install doggo-scraping --save
+**OBS**: As you may noticed in the isolated pieces of code above and will see at the **Hands On** section, the promises `goto()` and `iterate()` return itselves. That's because we need promises respect these "hierarchical" behaviour of our algorithms.
     
 ## Hands On
 
