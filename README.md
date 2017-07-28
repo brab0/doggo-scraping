@@ -94,7 +94,7 @@ In the fallowing script, we're going to get all books from the site 'http://edit
 
 	// Since Doggo Scraping is a class, we need to require it and instantiate a new object
 	
-    	const DoggoScraping = require('../doggo-scraping');
+    	const DoggoScraping = require('doggo-scraping');
 	const doggo = new DoggoScraping();
 	
 	// simple counter to totalize books at the end
