@@ -82,60 +82,86 @@ Our iterator method (also a Promise), receives a selector to iterate over it, re
     
 ## Hands On
 ```javascript
-    // since DoggoScraping is a class, after require it, we have to instatiate a new object
-    const DoggoScraping = require('../doggo-scraping');
-    const doggo = new DoggoScraping();
-    
-    let count = 0;
-    
-    doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
-    
-    	let categories = [];
-    
-    	return doggoInHome.iterate('.itens_menu a', (category, index) => {
-    		
-    		let books = [];
-    
-    		return doggoInHome.goto(doggoInHome.url + category.attr('href'))
-    		.then(doggoInCategory => {
-    
-    			return doggoInCategory.iterate('.caixa_produtos .box a', (book, i) => {
-    				
-    				return doggoInCategory.goto(doggoInHome.url + book.attr('href'))
-    				.then(doggoInBooks => {
-    
-    					books.push({
-    						url : book.attr('href'),
-    						title : doggoInBooks.eval('.caixa_produtos_direita h2').text(),
-    						image : doggoInBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
-    					});
-    
-    					return books;
-    				});
-    			});
-    		})
-    		.then(books => {
-    			categories.push({
-    				title : category.text(),
-    				link : category.attr('href'),
-    				books : {
-    					length: books.length,
-    					itens : books
-    				}
-    			});
-    
-    			console.log(categories[categories.length - 1])
-    
-    			count += books.length;
-    
-    			return categories;
-    		});
-    	});
-    })
-    .then(categories => {
-    	console.log(`Total Categories: ${categories.length}`)
-    	console.log(`Total Books: ${doggoAtPool.count}`)
-    });
+
+	// Since Doggo Scraping is a class, we need to require it and instatiate a new object
+	
+    	const DoggoScraping = require('../doggo-scraping');
+	const doggo = new DoggoScraping();
+	
+	// simple counter to totalize books at the end
+	let count = 0;
+
+	/*
+	* Next, we're using our object to initialize a scraping script block.
+	* At this moment, the object doggo cannot do much. We're gonna initialize it
+	* to have access to the other methods exposed at doggoAtHome	
+	*/
+	
+	doggo.wakeUp('http://editoraunicamp.com.br/', doggoAtHome => {
+		
+		let categories = [];
+		
+		/* Ok, as we also set it to go to a valid url at wakeUp(), 
+		* now we're literally on it. So, let's iterate over '.itens_menu a'
+		* to get the categories attributes we need.
+		* OBS: do not forget to return. As we already said, returning the promises
+		* will ensure the right execution's sequence.
+		*/
+		
+		return doggoAtHome.iterate('.itens_menu a', (category, index) => {
+
+			let books = [];
+			
+			/* now I've got a category element, I can follow the links to explore(goto()) their items
+			* OBS: some notes here. First, another promise return(do not forget). Second, you may have noticed:
+			*		    doggoAtHome.url + category.attr('href')
+			* 
+			*
+			*/
+			
+			return doggoAtHome.goto(doggoAtHome.url + category.attr('href'))
+			.then(doggoAtCategory => {
+				
+				
+				// OBS: ret...ok, you got it, right?
+				
+				return doggoAtCategory.iterate('.caixa_produtos .box a', (book, i) => {
+
+					return doggoAtCategory.goto(doggoAtHome.url + book.attr('href'))
+					.then(doggoAtBooks => {
+
+						books.push({
+							url : book.attr('href'),
+							title : doggoAtBooks.eval('.caixa_produtos_direita h2').text(),
+							image : doggoAtHome.url + doggoAtBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
+						});
+
+						return books;
+					});
+				});
+			})
+			.then(books => {
+				categories.push({
+					title : category.text(),
+					link : category.attr('href'),
+					books : {
+						length: books.length,
+						itens : books
+					}
+				});
+
+				console.log(categories[categories.length - 1])
+
+				count += books.length;
+
+				return categories;
+			});
+		});
+	})
+	.then(categories => {
+		console.log(`Total Categories: ${categories.length}`)
+		console.log(`Total Books: ${doggoAtPool.count}`)
+	});
 ```
 
 ## That's all folks!
