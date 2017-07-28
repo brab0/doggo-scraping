@@ -22,7 +22,7 @@ doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
 					books.push({
 						url : book.attr('href'),
 						title : doggoInBooks.eval('.caixa_produtos_direita h2').text(),
-						image : doggoInBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
+						image : doggoInHome.url + doggoInBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
 					});
 
 					return books;
