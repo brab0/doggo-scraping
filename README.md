@@ -201,22 +201,24 @@ In the fallowing script, we're going to get all books from the site 'http://edit
 	    .then(() => {
 	    	
 		/*  
-		*  let's return our 'categories' to the promise above
-		*  to show the final result
+		*  returns our 'categories' to be resolved 
+		*  at the wakeUp end showing the totalizers
 		*/
 		
 	    	return categories;
 	    });
 	})
-	.then(categories => {	    
+	.then(categories => {
+	    //  totalizers
 	    console.log(`--------------------------------`)
 	    console.log(`Total Categories: ${categories.length}`)
-	    console.log(`Total Books: ${doggoAtPool.count}`)
+	    console.log(`Total Books: ${count}`)
 	    console.log(`--------------------------------`)
 	});
 ```
 
 ## That's all folks!
+This package isn't mature enough and has a long way with many possibilities to go.
 If you have any suggestion or found a bug, let me know!
 
 <img src="https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg" width="100%">
