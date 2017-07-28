@@ -7,8 +7,8 @@
     "type": "git",
     "url": "git+https://github.com/brab0/doggo-scraping.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Rodrigo Brabo <brabo.rodrigo@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/brab0/doggo-scraping/issues"
   },
