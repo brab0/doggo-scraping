@@ -1,26 +1,21 @@
 {
-  "name": "mr-crawler",
+  "name": "doggo-scraping",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
+  "description": "Doggo is a little friend to help you make scraping scripts a lot easier.",
+  "main": "doggo-scrapping.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brab0/mr-crawler.git"
+    "url": "git+https://github.com/brab0/doggo-scraping.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/brab0/mr-crawler/issues"
+    "url": "https://github.com/brab0/doggo-scraping/issues"
   },
-  "homepage": "https://github.com/brab0/mr-crawler#readme",
+  "homepage": "https://github.com/brab0/doggo-scraping#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "chrome-launcher": "^0.2.1",
     "chrome-remote-interface": "^0.23.3"
-  },
-  "engines" : { "node" : ">=7" }
+  }
 }
