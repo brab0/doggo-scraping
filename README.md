@@ -17,19 +17,19 @@ Method to initialyze the scraping block. Internally `lauches headless-chrome`, c
 
 ```javascript
 ...
-    doggo.wakeUp('http://home.com/', doggoAtHome => {  // instance of Doggo of this page context
-        // scraping script goes here
-        console.log(`Hello, Doggo! Your home now is ${doggoAtHome.url}`);
-    });
+	doggo.wakeUp('http://home.com/', doggoAtHome => {  // instance of Doggo of this page context
+	    // scraping script goes here
+	    console.log(`Hello, Doggo! Your home now is ${doggoAtHome.url}`);
+	});
 ```
 ...or even:
 ```javascript
 ...
-    doggo.wakeUp('http://home.com/', doggoAtHome => {   // instance of Doggo of this page context
-        // scraping script goes here
-        return `Hello, Doggo! Your home now is ${doggoAtHome.url}`;
-    })
-    .then(greeting => console.log(greeting));
+	doggo.wakeUp('http://home.com/', doggoAtHome => {   // instance of Doggo of this page context
+	    // scraping script goes here
+	    return `Hello, Doggo! Your home now is ${doggoAtHome.url}`;
+	})
+	.then(greeting => console.log(greeting));
 ```
 
 ### goto(url).then(function(){})
@@ -37,24 +37,24 @@ Method to open a new page. Once a page is ready, it resolves a new instance of d
 
 ```javascript
 ...
-    return doggoAtHome.goto('http://beach.com/')
-    .then(doggoAtBeach => {
-        // scraping script goes here
-        return `Hello, Doggo! Your home now is ${doggoAtBeach.url}`;
-    })
-    .then(greeting => console.log(greeting));
+	return doggoAtHome.goto('http://beach.com/')
+	.then(doggoAtBeach => {
+	    // scraping script goes here
+	    return `Hello, Doggo! Your home now is ${doggoAtBeach.url}`;
+	})
+	.then(greeting => console.log(greeting));
 ...
 ```
 ...or maybe a chain of them:
 ```javascript
 ...
-    return doggoAtHome.goto('https://www.beach.com/')
-    .then(doggoAtBeach => {
-		console.log(`Doggo is here: ${doggoAtBeach.url}`)
-		return doggoAtBeach.goto('http://pool.com/')
+	return doggoAtHome.goto('https://www.beach.com/')
+	.then(doggoAtBeach => {
+	    console.log(`Doggo is here: ${doggoAtBeach.url}`)
+	    return doggoAtBeach.goto('http://pool.com/')
 	})
 	.then(doggoAtPool => console.log(`Now, doggo is here: ${doggoAtPool.url}`))
-   	.then(msg => console.log(`Doggo loves pool`));
+	.then(msg => console.log(`Doggo loves pool`));
 ...
 ```
 
@@ -62,8 +62,8 @@ Method to open a new page. Once a page is ready, it resolves a new instance of d
 Evaluates a selector (according to instance context) and returns a "jquery element".
 ```javascript
 ...
-    let goodBoy = doggoAtHome.eval('.good-boy');
-    console.log(goodBoy.attr('href'))
+	let goodBoy = doggoAtHome.eval('.good-boy');
+	console.log(goodBoy.attr('href'))
 ...
 ```
 
@@ -72,74 +72,155 @@ Our iterator method (also a Promise), receives a selector to iterate over it, re
 
 ```javascript
 ...
-    return doggo.iterate('.doggo-class a', (item, index) => {
-        console.log(index, item.text())
-    }).then(() => console.log("That's it!"));
+	return doggo.iterate('.doggo-class a', (item, index) => {
+	    console.log(index, item.text())
+	}).then(() => console.log("That's it!"));
 ...
 ```
 
 **OBS**: As you may noticed in the isolated pieces of code above and will see at the **Hands On** section, the promises `goto()` and `iterate()` always return itselves. That's because we need promises respect a "hierarchical" behaviour (resolve to continue).
     
 ## Hands On
+In the fallowing script, we're going to get all books from the site 'http://editoraunicamp.com.br/' and set them to their respective categories. To get there, we will:
+- `goto()` the page where the categories are;
+- `iterate()` over the category items;
+- `goto()` these categories pages to see our books;
+- `iterate()` over all books elements;
+- `goto()` each book's details page;
+- handle the elements(`eval()`) and keep these books and categories until the last one;
+- finally, we show up(`console.log()`) the results kepts;
+
 ```javascript
-    // since DoggoScraping is a class, after require it, we have to instatiate a new object
-    const DoggoScraping = require('../doggo-scraping');
-    const doggo = new DoggoScraping();
-    
-    let count = 0;
-    
-    doggo.wakeUp('http://editoraunicamp.com.br/', doggoInHome => {
-    
-    	let categories = [];
-    
-    	return doggoInHome.iterate('.itens_menu a', (category, index) => {
-    		
-    		let books = [];
-    
-    		return doggoInHome.goto(doggoInHome.url + category.attr('href'))
-    		.then(doggoInCategory => {
-    
-    			return doggoInCategory.iterate('.caixa_produtos .box a', (book, i) => {
-    				
-    				return doggoInCategory.goto(doggoInHome.url + book.attr('href'))
-    				.then(doggoInBooks => {
-    
-    					books.push({
-    						url : book.attr('href'),
-    						title : doggoInBooks.eval('.caixa_produtos_direita h2').text(),
-    						image : doggoInBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
-    					});
-    
-    					return books;
-    				});
-    			});
-    		})
-    		.then(books => {
-    			categories.push({
-    				title : category.text(),
-    				link : category.attr('href'),
-    				books : {
-    					length: books.length,
-    					itens : books
-    				}
-    			});
-    
-    			console.log(categories[categories.length - 1])
-    
-    			count += books.length;
-    
-    			return categories;
-    		});
-    	});
-    })
-    .then(categories => {
-    	console.log(`Total Categories: ${categories.length}`)
-    	console.log(`Total Books: ${doggoAtPool.count}`)
-    });
+
+	// Since Doggo Scraping is a class, we need to require it and instantiate a new object
+	
+    	const DoggoScraping = require('../doggo-scraping');
+	const doggo = new DoggoScraping();
+	
+	// simple counter to totalize books at the end
+	let count = 0;
+
+	/*
+	*  Next, we're using our object to initialize a scraping script block.
+	*  At this moment, the object doggo cannot do much. We're gonna initialize it
+	*  to have access to the other methods exposed at doggoAtHome	
+	*/
+	
+	doggo.wakeUp('http://editoraunicamp.com.br/', doggoAtHome => {
+		
+	    // we're gonna keep categories to show at the end
+		
+	    let categories = [];
+		
+	    /* 
+	    *  Ok, as we also set it to go to a valid url at wakeUp(), 
+	    *  now we're literally on it. So, let's iterate over '.itens_menu a'
+	    *  to get the categories attributes we need.
+	    *  OBS: do not forget to return. As we already said, returning the promises
+	    *  will ensure the right execution's sequence.
+	    */
+		
+	    return doggoAtHome.iterate('.itens_menu a', (category, index) => {			        
+			
+	    	/* 
+		* Now we've got a category element, we can follow the links to explore(goto()) their items
+	    	* OBS: another promise's return(do not forget).
+	    	*/
+			
+	    	return doggoAtHome.goto(doggoAtHome.url + category.attr('href'))
+	    	.then(doggoAtCategory => {
+			
+		    // we're gonna keep books to push into categories
+
+		    let books = [];
+			
+	      	    /* 
+		    *  Now, I'm in a category's page and can see every book inside it. Let's iterate!
+	      	    *  OBS: another ret...ok, you got it, right?
+		    */
+			
+	      	    return doggoAtCategory.iterate('.caixa_produtos .box a', (book, i) => {
+				
+			/* 
+			*  We are almost there! But, the item we got in iteration
+			*  doesn't have enough information. They are in another page.
+			*  Let's go there!
+			*/
+
+			return doggoAtCategory.goto(doggoAtHome.url + book.attr('href'))
+			.then(doggoAtBooks => {
+					
+			    /*
+			    *  There it is! All we need is to push what we got into an array.
+			    *  Note below that the element book, provided by iterate, already is a jQuery element.
+			    *  That's why we can operate jquery methods such book.attr('href'). 
+			    *  But we still need keep element that aren't. So, as you can see, 
+			    *  to get title and image src, we're gonna use eval() method in the page's
+			    *  context these elements are, which is instatiated at doggoAtBooks.
+			    */
+
+		    	    books.push({
+		        	url : book.attr('href'),
+				title : doggoAtBooks.eval('.caixa_produtos_direita h2').text(),
+				image : doggoAtHome.url + doggoAtBooks.eval('.caixa_produtos_esquerda_foto .foto_detalhe a').attr('href')
+		    	    });			    			    
+		        });
+	    	    })
+		    .then(() => {		    	
+			
+			/*  
+			*  let's return 'books' to the promise above,
+			*  where we're gonna set it as a category's attribute
+			*/
+			
+			return books;
+		    });
+		})
+		.then(books => {
+		
+		    /*
+		    *  Now we have books and the category of this iteration,
+		    *  we push it into an array
+		    */
+		    categories.push({
+			title : category.text(),
+			link : category.attr('href'),
+			books : {
+			    length: books.length,
+		    	    itens : books
+		        }
+		    });
+		    
+		    // let's print the last category kept to show the progress
+		    console.log(categories[categories.length - 1])
+		    
+		    // we want to show the total os books as well
+		    count += books.length;	    	    
+	        });
+	    })
+	    .then(() => {
+	    	
+		/*  
+		*  returns our 'categories' to be resolved 
+		*  at the wakeUp end showing the totalizers
+		*/
+		
+	    	return categories;
+	    });
+	})
+	.then(categories => {
+	    //  totalizers
+	    console.log(`--------------------------------`)
+	    console.log(`Total Categories: ${categories.length}`)
+	    console.log(`Total Books: ${count}`)
+	    console.log(`--------------------------------`)
+	});
 ```
 
 ## That's all folks!
-If you have any suggestion ou found a bug, let me know!
+This package isn't mature enough and has a long way with many possibilities to go.
+If you have any suggestion or found a bug, let me know!
+
 <img src="https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg" width="100%">
 
 ## License
