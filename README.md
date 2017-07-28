@@ -18,16 +18,16 @@ Method to initialyze the scraping block. Internally `lauches headless-chrome`, c
 ```javascript
 ...
 	doggo.wakeUp('http://home.com/', doggoAtHome => {  // instance of Doggo of this page context
-	  // scraping script goes here
-	  console.log(`Hello, Doggo! Your home now is ${doggoAtHome.url}`);
+	    // scraping script goes here
+	    console.log(`Hello, Doggo! Your home now is ${doggoAtHome.url}`);
 	});
 ```
 ...or even:
 ```javascript
 ...
 	doggo.wakeUp('http://home.com/', doggoAtHome => {   // instance of Doggo of this page context
-	  // scraping script goes here
-	  return `Hello, Doggo! Your home now is ${doggoAtHome.url}`;
+	    // scraping script goes here
+	    return `Hello, Doggo! Your home now is ${doggoAtHome.url}`;
 	})
 	.then(greeting => console.log(greeting));
 ```
@@ -38,9 +38,9 @@ Method to open a new page. Once a page is ready, it resolves a new instance of d
 ```javascript
 ...
 	return doggoAtHome.goto('http://beach.com/')
-	  .then(doggoAtBeach => {
-	  // scraping script goes here
-	  return `Hello, Doggo! Your home now is ${doggoAtBeach.url}`;
+	.then(doggoAtBeach => {
+	    // scraping script goes here
+	    return `Hello, Doggo! Your home now is ${doggoAtBeach.url}`;
 	})
 	.then(greeting => console.log(greeting));
 ...
@@ -50,8 +50,8 @@ Method to open a new page. Once a page is ready, it resolves a new instance of d
 ...
 	return doggoAtHome.goto('https://www.beach.com/')
 	.then(doggoAtBeach => {
-	  console.log(`Doggo is here: ${doggoAtBeach.url}`)
-	  return doggoAtBeach.goto('http://pool.com/')
+	    console.log(`Doggo is here: ${doggoAtBeach.url}`)
+	    return doggoAtBeach.goto('http://pool.com/')
 	})
 	.then(doggoAtPool => console.log(`Now, doggo is here: ${doggoAtPool.url}`))
 	.then(msg => console.log(`Doggo loves pool`));
@@ -73,7 +73,7 @@ Our iterator method (also a Promise), receives a selector to iterate over it, re
 ```javascript
 ...
 	return doggo.iterate('.doggo-class a', (item, index) => {
-	  console.log(index, item.text())
+	    console.log(index, item.text())
 	}).then(() => console.log("That's it!"));
 ...
 ```
@@ -108,7 +108,7 @@ In the fallowing script, we're going to get all books from the site 'http://edit
 	
 	doggo.wakeUp('http://editoraunicamp.com.br/', doggoAtHome => {
 		
-	  // we're gonna keep categories to show at the end
+	    // we're gonna keep categories to show at the end
 		
 	    let categories = [];
 		
