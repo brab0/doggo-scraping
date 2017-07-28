@@ -2,7 +2,7 @@
   "name": "doggo-scraping",
   "version": "1.0.1",
   "description": "Doggo is a little friend to help you make scraping scripts a lot easier.",
-  "main": "doggo-scrapping.js",
+  "main": "doggo-scraping.js",
   "keywords" : ["scraping"],
   "repository": {
     "type": "git",
