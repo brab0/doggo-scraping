@@ -217,7 +217,7 @@ In the fallowing script, we're going to get all books from the site 'http://edit
 ```
 
 ## That's all folks!
-If you have any suggestion ou found a bug, let me know!
+If you have any suggestion or found a bug, let me know!
 
 <img src="https://user-images.githubusercontent.com/850087/28640180-4f369856-7221-11e7-856d-7cc5e3b4739e.jpg" width="100%">
 
